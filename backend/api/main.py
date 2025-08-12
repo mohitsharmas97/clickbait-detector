@@ -4,6 +4,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from utils import predict_clickbait
 from urllib.parse import unquote
+from langdetect import detect
+from deep_translator import GoogleTranslator
 
 model_path = os.path.join(os.path.dirname(__file__), '..', 'models', 'combined.joblib')
 
@@ -11,6 +13,18 @@ model_components = joblib.load(model_path)
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
+
+
+def translate_to_english(text):
+    try:
+        lang = detect(text)
+        if lang != 'en':
+            translated = GoogleTranslator(source='auto', target='en').translate(text)
+            return translated
+        return text
+    except Exception as e:
+        print(f"[WARN] Translation failed: {e}")
+        return text  #return original text if translation fails...
 
 
 @app.route('/predict', methods=['POST'])
@@ -21,6 +35,8 @@ def predict():
         return jsonify({'error': 'Missing "title" field in request body'}), 400
 
     prediction_title = unquote(data['title'])
+
+    prediction_title = translate_to_english(prediction_title)
 
     return jsonify(predict_clickbait(prediction_title, model_components)), 200
 
