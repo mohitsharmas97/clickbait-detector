@@ -36,8 +36,3 @@ def predict_clickbait(title, model_components, nb_weight=0.5, rf_weight=0.5):
         'rf_probability': rf_proba,
         'combined_probability': combined_proba
     }
-
-# TODO: Language translation support
-
-
-

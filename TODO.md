@@ -1,2 +1,1 @@
 - [ ] Fix playlist and Jam title Updates
-- [ ] Support translation
