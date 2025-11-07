@@ -1,4 +1,5 @@
 let pageUrl = "";
+const PREDICTION_BADGE_CLASS = 'clickbait-prediction-badge';
 
 function getVideoTitleElement() {
     const selectors = [
@@ -11,6 +12,7 @@ function getVideoTitleElement() {
     
     for (const selector of selectors) {
         const titleElement = document.querySelector(selector);
+
         if (titleElement) {
             return titleElement;
         }
@@ -42,7 +44,7 @@ async function predictClickbait(title) {
 async function waitForVideoTitleUpdate() {
     const titleElement = getVideoTitleElement();
     const title = titleElement ? titleElement.getAttribute('title') : null;
-    console.log('Current title:', title);
+    // console.log('Current title:', title);
 
     if (title) {
         // console.log(title);
@@ -50,9 +52,18 @@ async function waitForVideoTitleUpdate() {
         let result = await predictClickbait(title);
 
         if (result) {
-            // console.log('Prediction result:', result);
+            console.log('Prediction result:', titleElement);
             result = (result.combined_probability * 100).toFixed(2);
             titleElement.textContent = title + ' ' + result + '%';
+            const prob = parseFloat(result);
+            titleElement.style.fontWeight = 'bold';
+            if (!isNaN(prob)) {
+                // map prob (0-100) to hue 120 (green) -> 0 (red)
+                const clamped = Math.max(0, Math.min(100, prob));
+                const hue = (1 - clamped / 100) * 120;
+                titleElement.style.transition = 'color 0.25s ease';
+                titleElement.style.color = `hsl(${hue}, 85%, 40%)`;
+            }
             if (titleElement.hasAttribute('is-empty')) {
                 titleElement.removeAttribute('is-empty');
             }
@@ -79,7 +90,7 @@ function onPageMutation() {
     }
 }
 
-const observer = new MutationObserver((mutations) => {
+const observer = new MutationObserver(() => {
     onPageMutation();
 });
 
