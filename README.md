@@ -57,13 +57,14 @@ RF classifier analyzes multiple aspects of titles:
 ### Prerequisites
 - Python 3.7+
 - Chrome/Chromium browser
-- Node.js (optional, for development)
+- Docker (optional, for containerized deployment)
+- Git
 
-### Backend Setup
+### Quick Start - Local Development
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/NikitaBryndak/clickbait-detector.git
+   git clone https://github.com/Swiifts/clickbait-detector.git
    cd clickbait-detector
    ```
 
@@ -79,35 +80,63 @@ RF classifier analyzes multiple aspects of titles:
    ```
    The API will be available at `http://localhost:8000`
 
+### Docker Deployment
+
+Deploy the backend using Docker for easy containerization and production readiness.
+
+#### Build the Docker Image
+```bash
+docker build -t clickbait-detector:latest .
+```
+
+#### Run the Container
+```bash
+docker run -p 8000:8000 clickbait-detector:latest
+```
+
+The API will be accessible at `http://localhost:8000`
+
+Then run:
+```bash
+docker-compose up
+```
+
 ### Chrome Extension Setup
 
 1. **Open Chrome Extensions page**
    - Navigate to `chrome://extensions/`
-   - Enable "Developer mode"
+   - Enable "Developer mode" (toggle in top-right corner)
 
 2. **Load the extension**
    - Click "Load unpacked"
-   - Select the `frontend` folder
+   - Select the `frontend` folder from your local repository
 
 3. **Verify installation**
-   - The extension icon should appear in the toolbar
-   - Visit any YouTube video to see clickbait detection in action
+   - The extension icon should appear in your toolbar
+   - Navigate to any YouTube video
+   - You should see a clickbait probability badge next to the video title
 
 ## API Usage
 
 ### Health Check
 ```bash
-GET http://localhost:8000/health
+curl http://localhost:8000/health
+```
+
+**Response:**
+```json
+{
+    "status": "healthy",
+    "message": "Clickbait API is running",
+    "model_loaded": true
+}
 ```
 
 ### Predict Clickbait
 ```bash
-POST http://localhost:8000/predict
-Content-Type: application/json
-
-{
-    "title": "You Won't Believe What Happened Next!"
-}
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"title": "You Won'"'"'t Believe What Happened Next!"}'
 ```
 
 **Example Response:**
@@ -120,11 +149,46 @@ Content-Type: application/json
 }
 ```
 
+**Response Fields:**
+- `prediction`: 0 (not clickbait) or 1 (clickbait)
+- `nb_probability`: Naive Bayes model confidence (0-1)
+- `rf_probability`: Random Forest model confidence (0-1)
+- `combined_probability`: Weighted ensemble score (0-1)
+
 ##  Privacy & Security
 
 - **Local Processing**: All analysis happens locally or on your controlled server
-- **No Data Collection**: The extension doesn't store or transmit personal data
-- **Minimal Permissions**: Only requires access to YouTube and localhost API
+- **No Data Collection**: The extension doesn't store or transmit personal data beyond the API
+- **Minimal Permissions**: The extension only requires access to YouTube and the local Flask API
+- **Model Security**: Pre-trained models are included; no model data is transmitted
+
+## Troubleshooting
+
+### Docker Issues
+
+**"Port 8000 already in use"**
+```bash
+docker run -p 8001:8000 clickbait-detector:latest
+```
+
+**"Models not found" error**
+Ensure the Dockerfile correctly copies the `backend/models` directory:
+```dockerfile
+COPY ./backend/models ./models
+```
+
+### Chrome Extension Issues
+
+**Extension not detecting titles**
+1. Ensure Flask API is running: `http://localhost:8000/health`
+2. Check browser console (F12) for errors
+3. Reload the extension from `chrome://extensions/`
+
+**CORS errors**
+The API includes CORS headers. If issues persist, verify `flask_cors` is installed:
+```bash
+pip install flask-cors
+```
 
 ##  Development Status
 
