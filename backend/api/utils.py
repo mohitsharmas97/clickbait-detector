@@ -1,4 +1,5 @@
 def predict_clickbait(title, model_components, nb_weight=0.5, rf_weight=0.5):
+    import pandas as pd
 
     questions = ['What', 'How', 'Why', 'Is', 'Are', 'Do', 'Does', 'Did', 'Can', 'Could', 'Will', 'Would']
     pronouns = ['I', 'me', 'my', 'you', 'your', 'he', 'him', 'his', 'she', 'her', 'it', 'its', 'we', 'us', 'our', 'they', 'them', 'their']
@@ -21,7 +22,7 @@ def predict_clickbait(title, model_components, nb_weight=0.5, rf_weight=0.5):
         'average_word_length': sum(len(word) for word in title.split()) / len(title.split()) if len(title.split()) > 0 else 0
     }
 
-    feature_array = [[features[col] for col in feature_names]]
+    feature_array = pd.DataFrame([[features[col] for col in feature_names]], columns=feature_names)
     
     title_vec = vectorizer.transform([title])
     nb_proba = modelNB.predict_proba(title_vec)[0, 1]

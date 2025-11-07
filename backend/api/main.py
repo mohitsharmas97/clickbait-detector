@@ -7,7 +7,11 @@ from urllib.parse import unquote
 from langdetect import detect
 from deep_translator import GoogleTranslator
 
-model_path = os.path.join(os.path.dirname(__file__), '..', 'models', 'combined.joblib')
+# Support both local development and Docker paths
+if os.path.exists('/app/models/combined.joblib'):
+    model_path = '/app/models/combined.joblib'
+else:
+    model_path = os.path.join(os.path.dirname(__file__), '..', 'models', 'combined.joblib')
 
 model_components = joblib.load(model_path)
 
@@ -68,4 +72,4 @@ def index():
 
 if __name__ == "__main__":
     print("Starting Flask server...")
-    app.run(debug=True, host='localhost', port=8000)
+    app.run(debug=True, host='0.0.0.0', port=8000)
