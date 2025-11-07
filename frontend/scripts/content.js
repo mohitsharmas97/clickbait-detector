@@ -1,5 +1,9 @@
 let pageUrl = "";
 const PREDICTION_BADGE_CLASS = 'clickbait-prediction-badge';
+const API_URL = 'http://localhost:8000';
+
+// Cross-browser compatible runtime API
+const runtime = typeof chrome !== 'undefined' ? chrome.runtime : (typeof browser !== 'undefined' ? browser.runtime : null);
 
 function getVideoTitleElement() {
     const selectors = [
@@ -23,8 +27,7 @@ function getVideoTitleElement() {
 
 async function predictClickbait(title) {
     try {
-        // console.log(encodeURIComponent(title));
-        const response = await fetch(`http://localhost:8000/predict`, {
+        const response = await fetch(`${API_URL}/predict`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

@@ -31,8 +31,11 @@ def translate_to_english(text):
         return text  #return original text if translation fails...
 
 
-@app.route('/predict', methods=['POST'])
+@app.route('/predict', methods=['POST', 'GET'])
 def predict():
+    if request.method == 'GET':
+        return jsonify({'message': 'Use POST method with JSON body containing "title" field to get predictions.'}), 200
+    
     data = request.get_json()
     
     if not data or 'title' not in data:
