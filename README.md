@@ -2,6 +2,12 @@
 
 A machine learning-powered clickbait detection system with a Chrome extension and Flask API backend. This project uses ensemble methods to identify clickbait content with high accuracy, specifically designed to work with YouTube video titles.
 
+## Screenshots
+
+| High Clickbait Probability | Low Clickbait Probability |
+| --- | --- |
+| ![High probability UI](./assets/High_Chance.png) | ![Low probability UI](./assets/Low_Chance.png) |
+
 ## Architecture
 
 ```

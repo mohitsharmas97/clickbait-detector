@@ -61,7 +61,7 @@ async function waitForVideoTitleUpdate() {
                 // map prob (0-100) to hue 120 (green) -> 0 (red)
                 const clamped = Math.max(0, Math.min(100, prob));
                 const hue = (1 - clamped / 100) * 120;
-                titleElement.style.transition = 'color 0.25s ease';
+                titleElement.style.transition = 'color 2s ease';
                 titleElement.style.color = `hsl(${hue}, 85%, 40%)`;
             }
             if (titleElement.hasAttribute('is-empty')) {
@@ -70,7 +70,7 @@ async function waitForVideoTitleUpdate() {
         }
         
     } else {
-        setTimeout(waitForVideoTitleUpdate, 2000);
+        setTimeout(waitForVideoTitleUpdate, 1000);
     }
 }
 
@@ -78,7 +78,7 @@ if (window.location.href.includes('/watch?v=')) {
     if (pageUrl !== window.location.href) {
         pageUrl = window.location.href;
         console.log(window.location.href);
-        setTimeout(waitForVideoTitleUpdate, 3000);
+        setTimeout(waitForVideoTitleUpdate, 1000);
     }
 }
 
@@ -86,7 +86,7 @@ function onPageMutation() {
     if (pageUrl !== window.location.href) {
         pageUrl = window.location.href;
         console.log(window.location.href);
-        setTimeout(waitForVideoTitleUpdate, 3000);
+        setTimeout(waitForVideoTitleUpdate, 1000);
     }
 }
 
